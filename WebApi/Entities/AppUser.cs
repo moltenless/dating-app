@@ -6,3 +6,4 @@ public class AppUser
     public string DisplayName { get; set; } = null!;
     public string Email { get; set; } = null!;
 }
+
