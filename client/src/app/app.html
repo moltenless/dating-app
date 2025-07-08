@@ -1,1 +1,10 @@
-<h3>{{title}}</h3>
+<h3 class="text-3xl text-red-500">{{title}}</h3>
+
+<ul>
+    @for (member of members(); track member.id) {
+        <li>{{member.id}} - {{member.displayName}}</li>
+    }
+</ul>
+
+
+<button class="btn btn-primary">Primary</button>
