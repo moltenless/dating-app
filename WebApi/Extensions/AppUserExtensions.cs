@@ -1,8 +1,22 @@
 using System;
+using WebApi.DTO;
+using WebApi.Entities;
+using WebApi.Interfaces;
 
 namespace WebApi.Extensions;
 
-public class AppUserExtensions
+public static class AppUserExtensions
 {
-
+    public static UserDto ToDto(
+        this AppUser user,
+        ITokenService tokenService)
+    {
+        return new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            DisplayName = user.DisplayName,
+            Token = tokenService.CreateToken(user),
+        };
+    }
 }

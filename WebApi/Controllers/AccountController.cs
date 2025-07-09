@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
 using WebApi.DTO;
 using WebApi.Entities;
+using WebApi.Extensions;
 using WebApi.Interfaces;
 
 namespace WebApi.Controllers;
@@ -34,13 +35,7 @@ public class AccountController(
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        return new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            DisplayName = user.DisplayName,
-            Token = tokenService.CreateToken(user),
-        };
+        return user.ToDto(tokenService);
     }
 
     [HttpPost("login")]
@@ -61,13 +56,7 @@ public class AccountController(
                 return Unauthorized(unauthorizedMessage);
         }
         
-        return new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            DisplayName = user.DisplayName,
-            Token = tokenService.CreateToken(user),
-        };
+        return user.ToDto(tokenService);
     }
 
     private async Task<bool> EmailExists(string email)
