@@ -13,7 +13,17 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error) {
         switch (error.status) {
           case 400:
-            toastService.error(error.error);
+            if (error.error.errors) {
+              const modelStateErrors = [];
+              for (const key in error.error.errors) {
+                if (error.error.errors[key]) {
+                  modelStateErrors.push(error.error.errors[key]);
+                }
+              }
+              throw modelStateErrors.flat();
+            } else {
+              toastService.error(error.error);
+            }
             break;
           case 401:
             toastService.error('Unauthorized');
@@ -25,7 +35,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             toastService.error('Server error');
             break;
           default:
-            toastService.error('Something unexpected went wrong'); 
+            toastService.error('Something unexpected went wrong');
             break;
         }
       }
