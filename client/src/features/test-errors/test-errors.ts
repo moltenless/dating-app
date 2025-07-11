@@ -40,7 +40,7 @@ export class TestErrors {
   }
 
   get400ValidationError() {
-    this.http.post(this.baseUrl + 'accounts/register', {}).subscribe({
+    this.http.post(this.baseUrl + 'account/register', {}).subscribe({
       next: response => console.log(response),
       error: error => console.log(error)
     })
