@@ -36,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              ValidateAudience = false
          };
     });
-
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
 
 var app = builder.Build();
