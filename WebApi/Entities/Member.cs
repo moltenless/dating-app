@@ -1,4 +1,5 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.ConstrainedExecution;
 
 namespace WebApi.Entities;
@@ -16,5 +17,6 @@ public class Member
     public required string City { get; set; }
     public required string Country { get; set; }
 
+    [ForeignKey(nameof(Id))]
     public AppUser User { get; set; } = null!;
 }

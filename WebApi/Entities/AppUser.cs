@@ -8,5 +8,7 @@ public class AppUser
     public string? ImageUrl { get; set; }
     public byte[] PasswordHash { get; set; } = null!;
     public byte[] PasswordSalt { get; set; } = null!;
+
+    public Member Member { get; set; } = null!;
 }
 
