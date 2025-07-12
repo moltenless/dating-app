@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.ConstrainedExecution;
+using System.Text.Json.Serialization;
 
 namespace WebApi.Entities;
 
@@ -17,7 +18,10 @@ public class Member
     public required string City { get; set; }
     public required string Country { get; set; }
 
+    [JsonIgnore]
     public List<Photo> Photos { get; set; } = [];
+
+    [JsonIgnore]
     [ForeignKey(nameof(Id))]
     public AppUser User { get; set; } = null!;
 }

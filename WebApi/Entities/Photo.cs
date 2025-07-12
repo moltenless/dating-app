@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace WebApi.Entities;
 
@@ -9,5 +10,6 @@ public class Photo
     public string? PublicId { get; set; }
     public string MemberId { get; set; } = null!;
 
+    [JsonIgnore]
     public Member Member { get; set; } = null!;
 }
