@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './member-profile.css'
 })
 export class MemberProfile {
-
+  
 }
