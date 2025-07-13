@@ -13,3 +13,4 @@ public class Photo
     [JsonIgnore]
     public Member Member { get; set; } = null!;
 }
+ 
