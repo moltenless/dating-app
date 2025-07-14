@@ -5,11 +5,6 @@ using WebApi.Interfaces;
 
 namespace WebApi.Data;
 
-public class NewBaseType
-{
-    public void Update(Member member) => throw new NotImplementedException();
-}
-
 public class MemberRepository(AppDbContext context) : IMemberRepository
 {
     public void Update(Member member)
