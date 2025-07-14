@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.DTO;
 using WebApi.Entities;
+using WebApi.Extensions;
 using WebApi.Interfaces;
 
 namespace WebApi.Controllers;
@@ -32,16 +33,16 @@ public class MembersController(IMemberRepository repository) : BaseApiController
     [HttpPut]
     public async Task<ActionResult> UpdateMember(MemberUpdateDto dto)
     {
-        var memberId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (memberId is null) return BadRequest("Oops - no id found in token");
-
-        var member = await repository.GetMemberByIdAsync(memberId);
+        var memberId = User.GetMemberId();
+        var member = await repository.GetMemberForUpdateAsync(memberId);
         if (member is null) return BadRequest("Could not get member");
 
         member.DisplayName = dto.DisplayName ?? member.DisplayName;
         member.Description = dto.Description ?? member.Description;
         member.City = dto.City ?? member.City;
         member.Country = dto.Country ?? member.Country;
+
+        member.User.DisplayName = dto.DisplayName ?? member.User.DisplayName;
 
         // repository.Update(member);
 
