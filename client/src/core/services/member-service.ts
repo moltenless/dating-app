@@ -10,7 +10,7 @@ import { tap } from 'rxjs';
 export class MemberService {
   private http = inject(HttpClient)
   private baseUrl = environment.apiUrl;
-  editMode = signal(false);
+  editMode = signal(true);
   member = signal<Member | null>(null);
 
   getMembers() {
