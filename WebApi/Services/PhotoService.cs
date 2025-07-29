@@ -14,7 +14,7 @@ public class PhotoService : IPhotoService
     public PhotoService(IOptions<CloudinarySettings> config)
     {
         var account = new Account(
-            config.Value.CloudName, config.Value.ApiSecret, config.Value.ApiSecret);
+            config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
         _cloudinary = new Cloudinary(account);
     }
 
