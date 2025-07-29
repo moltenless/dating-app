@@ -44,7 +44,7 @@ public class MembersController(IMemberRepository repository) : BaseApiController
 
         member.User.DisplayName = dto.DisplayName ?? member.User.DisplayName;
 
-        // repository.Update(member);
+        // repository.Update(member); //optional
 
         if (await repository.SaveAllAsync()) return NoContent();
         return BadRequest("Failed to update member");
