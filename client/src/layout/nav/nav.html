@@ -20,6 +20,11 @@
             <a routerLink="/errors" routerLinkActive="text-accent">Errors</a>
             }
         </nav>
+
+        @if (busyService.busyRequestCount() > 0) {
+            <span class="loading loading-spinner text-accent"></span>
+        }
+
         <div class="flex align-middle ml-auto gap-3">
 
             <div class="dropdown mr-5 dropdown-end">
