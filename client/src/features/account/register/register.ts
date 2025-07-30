@@ -3,10 +3,11 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validatio
 import { RegisterCreds } from '../../../types/user';
 import { AccountService } from '../../../core/services/account-service';
 import { JsonPipe } from '@angular/common';
+import { TextInput } from "../../../shared/text-input/text-input";
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, JsonPipe],
+  imports: [ReactiveFormsModule, JsonPipe, TextInput],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
@@ -22,7 +23,7 @@ export class Register implements OnInit {
   
   initializeForm() {
     this.registerForm = new FormGroup({
-      email: new FormControl('johndoe@test.com', [Validators.required, Validators.email]),
+      email: new FormControl('', [Validators.required, Validators.email]),
       displayName: new FormControl('', Validators.required),
       password: new FormControl('', 
         [Validators.required, 
