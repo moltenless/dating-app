@@ -33,13 +33,17 @@ export class MemberService {
     return this.http.put(this.baseUrl + 'members', member);
   }
 
-  uploadPhoto(file: File){
+  uploadPhoto(file: File) {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<Photo>(this.baseUrl + 'members/add-photo', formData);
   }
 
-  setMainPhoto(photo: Photo){
+  setMainPhoto(photo: Photo) {
     return this.http.put(this.baseUrl + 'members/set-main-photo/' + photo.id, {});
+  }
+
+  deletePhoto(photoId: number) {
+    return this.http.delete(this.baseUrl + 'members/delete-photo/' + photoId);
   }
 }

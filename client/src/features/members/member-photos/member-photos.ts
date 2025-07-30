@@ -6,30 +6,31 @@ import { ImageUpload } from "../../../shared/image-upload/image-upload";
 import { AccountService } from '../../../core/services/account-service';
 import { User } from '../../../types/user';
 import { SetMainImage } from "../../../shared/set-main-image/set-main-image";
+import { DeleteButton } from "../../../shared/delete-button/delete-button";
 
 @Component({
   selector: 'app-member-photos',
-  imports: [ImageUpload, SetMainImage],
+  imports: [ImageUpload, SetMainImage, DeleteButton],
   templateUrl: './member-photos.html',
   styleUrl: './member-photos.css'
 })
-export class MemberPhotos implements OnInit{
+export class MemberPhotos implements OnInit {
   protected memberService = inject(MemberService);
-  private accountService = inject(AccountService);
+  protected accountService = inject(AccountService);
   private route = inject(ActivatedRoute);
   protected photos = signal<Photo[]>([]);
   protected loading = signal(false);
 
   ngOnInit(): void {
     const memberId = this.route.parent?.snapshot.paramMap.get('id')
-    if (memberId){
+    if (memberId) {
       this.memberService.getMemberPhotos(memberId).subscribe({
         next: photos => this.photos.set(photos)
       });
     }
   }
 
-  onUploadImage(file: File){
+  onUploadImage(file: File) {
     this.loading.set(true)
     this.memberService.uploadPhoto(file).subscribe({
       next: photo => {
@@ -44,7 +45,7 @@ export class MemberPhotos implements OnInit{
     })
   }
 
-  setMainPhoto(photo: Photo){
+  setMainPhoto(photo: Photo) {
     this.memberService.setMainPhoto(photo).subscribe({
       next: () => {
         const currentUser = this.accountService.currentUser();
@@ -56,5 +57,14 @@ export class MemberPhotos implements OnInit{
         }) as Member)
       }
     })
+  }
+
+  deletePhoto(photoId: number) {
+    this.memberService.deletePhoto(photoId).subscribe({
+      next: () => {
+        this.photos.update(photos => photos.filter(x => x.id != photoId));
+      }
+    })
+
   }
 }
