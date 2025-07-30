@@ -1,17 +1,51 @@
 <div class="card bg-base-100 w-1/2 mx-auto flex flex-col p-6 rounded-lg shadow-lg">
     <div class="card-title justify-center text-3xl text-primary">
         Sign up
-    </div>    
+    </div>
     <div class="card-body w-full">
-        <form #registerForm="ngForm" class="flex flex-col gap-4 w-full" (ngSubmit)="register()">
-            <input class="input w-full" name="email" [(ngModel)]="creds.email" placeholder="Email">
-            <input class="input w-full" name="displayName" [(ngModel)]="creds.displayName" placeholder="Display name">
-            <input type="password" class="input w-full" name="password" [(ngModel)]="creds.password" placeholder="Password">
-            
+        <form [formGroup]="registerForm" class="flex flex-col gap-4 w-full" (ngSubmit)="register()">
+            <label class="floating-label">
+                <span>Email</span>
+                <input 
+                    class="input w-full"
+                    formControlName="email"
+                    placeholder="Email">
+            </label>
+            <label class="floating-label">
+                <span>Display name</span>
+                <input 
+                    class="input w-full"
+                    formControlName="displayName"
+                    placeholder="Display name">
+            </label>
+            <label class="floating-label">
+                <span>Password</span>
+                <input 
+                    type="password"
+                    class="input w-full"
+                    formControlName="password"
+                    placeholder="Password">
+            </label>
+            <label class="floating-label">
+                <span>Confirm Password</span>
+                <input 
+                    type="password"
+                    class="input w-full"
+                    formControlName="confirmPassword"
+                    placeholder="Confirm Password">
+            </label>
+  
             <div class="flex items-center justify-end gap-3">
                 <button (click)="cancel()" type="button" class="btn">Cancel</button>
                 <button class="btn btn-primary" type="submit">Register</button>
             </div>
         </form>
     </div>
+
+    <div class="flex flex-col items-start px-3 w-full mockup-code text-lg">
+        <div>Form value: {{registerForm.value | json}}</div>
+        <div>Form status: {{registerForm.status |  json}}</div>
+
+    </div>
+
 </div>
