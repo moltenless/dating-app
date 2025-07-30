@@ -11,12 +11,18 @@
                     formControlName="email"
                     placeholder="Email">
             </label>
-            <label class="floating-label">
+            <label class="floating-label text-left">
                 <span>Display name</span>
                 <input 
                     class="input w-full"
+                    [class.input-error]="registerForm.controls['displayName'].invalid 
+                        && registerForm.controls['displayName'].touched"
                     formControlName="displayName"
                     placeholder="Display name">
+                    @if (registerForm.controls['displayName'].invalid 
+                        && registerForm.controls['displayName'].touched){
+                            <div class="validation-hint text-error text-xs">Display name is required</div>
+                        }
             </label>
             <label class="floating-label">
                 <span>Password</span>
