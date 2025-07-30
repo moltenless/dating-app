@@ -37,7 +37,9 @@
   
             <div class="flex items-center justify-end gap-3">
                 <button (click)="cancel()" type="button" class="btn">Cancel</button>
-                <button class="btn btn-primary" type="submit">Register</button>
+                <button 
+                    [disabled]="!registerForm.valid"
+                    class="btn btn-primary" type="submit">Register</button>
             </div>
         </form>
     </div>
