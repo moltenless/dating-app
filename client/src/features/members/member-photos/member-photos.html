@@ -1,5 +1,5 @@
 @if (!memberService.editMode()){
-    @if (photos$ | async; as photos){
+    @if (photos(); as photos){
         @if (photos.length > 0){
             <div class="grid grid-cols-4 auto-rows-min gap-3 p-5 h-[65vh] overflow-auto">
                 @for (photo of photos; track photo.id) {
@@ -12,5 +12,5 @@
     } @else {
     }
 } @else {
-    <app-image-upload />
+    <app-image-upload (uploadFile)="onUploadImage($event)" [loading]="loading()"/>
 }
