@@ -5,6 +5,7 @@ using WebApi.Data;
 using WebApi.DTO;
 using WebApi.Entities;
 using WebApi.Extensions;
+using WebApi.Helpers;
 using WebApi.Interfaces;
 
 namespace WebApi.Controllers;
@@ -15,8 +16,10 @@ public class MembersController(
     IPhotoService photoService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers()
-        => Ok(await repository.GetMembersAsync());
+    public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers(
+        [FromQuery] PagingParams pagingParams
+    )
+        => Ok(await repository.GetMembersAsync(pagingParams));
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Member>> GetMember(string id)

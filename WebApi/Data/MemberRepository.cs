@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Entities;
+using WebApi.Helpers;
 using WebApi.Interfaces;
 
 namespace WebApi.Data;
@@ -25,13 +26,13 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
         return await context.Members.FindAsync(id);
     }
 
-    public async Task<IReadOnlyList<Member>> GetMembersAsync()
+    public async Task<PaginatedResult<Member>> GetMembersAsync(PagingParams pagingParams)
     {
         var query = context.Members.AsQueryable();
-
-        return await context.Members
-
-        .ToListAsync();
+        return await PaginationHelper.CreateAsync(
+            query,
+            pagingParams.PageNumber,
+            pagingParams.PageSize);
     }
 
     public async Task<bool> SaveAllAsync()
