@@ -28,12 +28,32 @@
 
         @if(currentStep() === 2) { 
             <form [formGroup]="profileForm" class="flex flex-col w-full gap-4 steps">
-                <div>profile Form goes here</div>
+
+                <div class="flex items-center gap-4">
+                    <div class="font-semibold">Gender: </div>
+                    <label class="flex gap-3 items-center">
+                        <span>Male</span>
+                        <input type="radio" formControlName="gender" value="male"
+                        class="radio radio-primary">
+                    </label>
+                    <label class="flex gap-3 items-center">
+                        <span>Female</span>
+                        <input type="radio" formControlName="gender" value="female"
+                        class="radio radio-primary">
+                    </label>
+                </div>
+
+
+                <app-text-input [maxDate]="getMaxDate()"
+                    type="date" label="Date of Birth" formControlName="dateOfBirth" />
+                <app-text-input label="City" formControlName="city" />
+                <app-text-input label="Country" formControlName="country" />
+                
                 <div class="flex items-center justify-end gap-3">
                     <button (click)="prevStep()" type="button" class="btn">Back</button>
                     <button 
                         [disabled]="!profileForm.valid"
-                        (click)="register()";
+                        (click)="register()"
                         class="btn btn-primary" type="button">Register</button>
                 </div>
             </form>
