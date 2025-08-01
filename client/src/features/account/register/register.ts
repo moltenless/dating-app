@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, JsonPipe, TextInput],
+  imports: [ReactiveFormsModule, TextInput],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
@@ -73,7 +73,6 @@ export class Register {
   register() {
     if (this.profileForm.valid && this.credentialsForm.valid) {
       const formData = { ...this.credentialsForm.value, ...this.profileForm.value };
-
 
       this.accountService.register(formData).subscribe({
         next: _ => {
