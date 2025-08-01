@@ -27,7 +27,11 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
 
     public async Task<IReadOnlyList<Member>> GetMembersAsync()
     {
-        return await context.Members.ToListAsync();
+        var query = context.Members.AsQueryable();
+
+        return await context.Members
+
+        .ToListAsync();
     }
 
     public async Task<bool> SaveAllAsync()
