@@ -17,9 +17,12 @@ public class MembersController(
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers(
-        [FromQuery] PagingParams pagingParams
-    )
-        => Ok(await repository.GetMembersAsync(pagingParams));
+        [FromQuery] MemberParams memberParams)
+    {
+        memberParams.CurrentMemberId = User.GetMemberId();
+        return Ok(await repository.GetMembersAsync(memberParams));
+    }
+
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Member>> GetMember(string id)
