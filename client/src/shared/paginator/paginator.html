@@ -13,18 +13,18 @@
 
     <div class="flex items-center gap-2">
         <button 
-            class="btn-circle btn-ghost"
+            class="btn btn-circle btn-ghost text-2xl"
             [disabled]="pageNumber() === 1"
             (click)="onPageChange(pageNumber() - 1)"
         >
-            $larr
+            &larr;
          </button>
         <button 
-            class="btn-circle btn-ghost"
-            [disabled]="pageNumber() === 1"
+            class="btn btn-circle btn-ghost text-2xl"
+            [disabled]="pageNumber() >= totalPages()"
             (click)="onPageChange(pageNumber() + 1)"
         >
-            $rarr
+            &rarr;
          </button>
     </div>
 </div>
