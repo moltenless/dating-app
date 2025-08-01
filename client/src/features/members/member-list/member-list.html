@@ -1,5 +1,9 @@
-<div class="grid grid-cols-5 gap-6">
-    @for (member of members$ | async; track member.id) {
-        <app-member-card [member]="member"/>
+@if(paginatedMembers$ | async; as paginatedResult){
+    @if(paginatedResult.items; as members){
+        <div class="grid grid-cols-5 gap-6">
+            @for (member of members; track member.id) {
+                <app-member-card [member]="member"/>
+            }
+        </div>        
     }
-</div>
+}
