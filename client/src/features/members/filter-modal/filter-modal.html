@@ -25,6 +25,14 @@
                         name="maxAge" (change)="onMaxAgeChange()">
                 </div>
             </label>
+            <label class="flex justify-between items-center">
+              <span class="font-semibold">Order by: </span>
+              <select name="orderBy" class="select" [(ngModel)]="memberParams.orderBy">
+                <option disabled selected>Order by</option>
+                <option value="created">Newest Members</option>
+                <option value="lastActive">Last Active</option>
+              </select>
+            </label>
         </div>
     </div>
 
