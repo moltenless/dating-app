@@ -8,9 +8,9 @@
                 <span class="font-semibold">Select gender:</span>
                 <form class="filter">
                     <input type="reset" value="x" class="btn btn-square">
-                    <input type="radio" class="btn" [(ngModel)]="memberParams.gender"
+                    <input type="radio" class="btn" [(ngModel)]="memberParams().gender"
                         aria-label="Male" name="gender" value="male">
-                    <input type="radio" class="btn" [(ngModel)]="memberParams.gender"
+                    <input type="radio" class="btn" [(ngModel)]="memberParams().gender"
                         aria-label="Female" name="gender" value="female">
                 </form> 
             </label> 
@@ -18,16 +18,16 @@
                 <span class="font-semibold">Select age</span>
                 <div class="flex gap-3">
                     <input type="number"
-                        class="input w-20" [min]="18" [(ngModel)]="memberParams.minAge"
+                        class="input w-20" [min]="18" [(ngModel)]="memberParams().minAge"
                         name="minAge" (change)="onMinAgeChange()">
                     <input type="number"
-                        class="input w-20" [min]="memberParams.minAge" [(ngModel)]="memberParams.maxAge"
+                        class="input w-20" [min]="memberParams().minAge" [(ngModel)]="memberParams().maxAge"
                         name="maxAge" (change)="onMaxAgeChange()">
                 </div>
             </label>
             <label class="flex justify-between items-center">
               <span class="font-semibold">Order by: </span>
-              <select name="orderBy" class="select" [(ngModel)]="memberParams.orderBy">
+              <select name="orderBy" class="select" [(ngModel)]="memberParams().orderBy">
                 <option disabled selected>Order by</option>
                 <option value="created">Newest Members</option>
                 <option value="lastActive">Last Active</option>
