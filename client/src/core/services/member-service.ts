@@ -22,10 +22,13 @@ export class MemberService {
     params = params.append('minAge', memberParams.minAge);
     params = params.append('maxAge', memberParams.maxAge);
     params = params.append('orderBy', memberParams.orderBy);
-    
     if (memberParams.gender) params = params.append('gender', memberParams.gender);
 
-    return this.http.get<PaginatedResult<Member>>(this.baseUrl + 'members', {params});
+    return this.http.get<PaginatedResult<Member>>(
+      this.baseUrl + 'members', {params})
+        .pipe(tap(() => {
+          localStorage.setItem('filters', JSON.stringify(memberParams))
+        }));
   }
 
   getMember(id: string) {
