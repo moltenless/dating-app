@@ -1,6 +1,7 @@
 using System;
 using WebApi.DTO;
 using WebApi.Entities;
+using WebApi.Extensions;
 using WebApi.Helpers;
 using WebApi.Interfaces;
 
@@ -23,9 +24,24 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         return await context.Messages.FindAsync(messageId);
     }
 
-    public Task<PaginatedResult<MessageDto>> GetMessagesForMember()
+    public async Task<PaginatedResult<MessageDto>> GetMessagesForMember(
+        MessageParams messageParams
+    )
     {
-        throw new Exception();
+        var query = context.Messages
+            .OrderByDescending(x => x.MessageSent)
+            .AsQueryable();
+
+        query = messageParams.Container switch
+        {
+            "Outbox" => query.Where(x => x.SenderId == messageParams.MemberId),
+            _ => query.Where(x => x.RecipientId == messageParams.MemberId)
+        };
+
+        var messagesQuery = query.Select(MessageExtensions.ToDtoProjection());
+
+        return await PaginationHelper.CreateAsync(messagesQuery,
+             messageParams.PageNumber, messageParams.PageSize);
     }
     
     public Task<IReadOnlyList<MessageDto>> GetMessageThread(
