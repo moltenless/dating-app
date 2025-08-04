@@ -27,10 +27,11 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     {
         
     }
+    
     public Task<IReadOnlyList<MessageDto>> GetMessageThread(
         string currentMemberId, string recipientId)
     {
-        
+
     }
 
     public async Task<bool> SaveAllChangesAsync()
