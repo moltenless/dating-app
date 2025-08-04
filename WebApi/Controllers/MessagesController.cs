@@ -1,0 +1,36 @@
+using System;
+using Microsoft.AspNetCore.Mvc;
+using WebApi.DTO;
+using WebApi.Entities;
+using WebApi.Extensions;
+using WebApi.Interfaces;
+
+namespace WebApi.Controllers;
+
+public class MessagesController(
+    IMessageRepository messageRepository,
+    IMemberRepository memberRepository) : BaseApiController
+    
+{
+    [HttpPost]
+    public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto dto)
+    {
+        var sender = await memberRepository.GetMemberByIdAsync(User.GetMemberId());
+        var recipient = await memberRepository.GetMemberByIdAsync(dto.RecipientId);
+
+        if (sender == null || recipient == null || sender.Id == dto.RecipientId)
+            return BadRequest("Cannot send this message");
+
+        var message = new Message
+        {
+            SenderId = sender.Id,
+            RecipientId = recipient.Id,
+            Content = dto.Content
+        };
+
+        messageRepository.AddMessage(message);
+
+        if (await messageRepository.SaveAllChangesAsync()) return message.ToDto();
+        return BadRequest("Failed to send message");
+    }
+}

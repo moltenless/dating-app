@@ -25,13 +25,13 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
 
     public Task<PaginatedResult<MessageDto>> GetMessagesForMember()
     {
-        
+        throw new Exception();
     }
     
     public Task<IReadOnlyList<MessageDto>> GetMessageThread(
         string currentMemberId, string recipientId)
     {
-
+        throw new Exception();
     }
 
     public async Task<bool> SaveAllChangesAsync()
