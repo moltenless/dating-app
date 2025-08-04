@@ -15,6 +15,4 @@ public class Message
     public Member Sender { get; set; } = null!;
     public required string RecipientId { get; set; }
     public Member Recipient { get; set; } = null!;
-
-
 }
