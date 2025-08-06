@@ -1,3 +1,46 @@
-@for (message of paginatedMessages()?.items; track message.id) {
-    <p>{{message.content}}</p>
-}
+<div class="flex flex-col w-full">
+    <div class="flex justify-between items-center">
+        <div class="tabs tabs-box tabs-lg text-primary w-fit">
+            @for (tab of tabs; track $index) {
+                <button role="tab" 
+                class="tab" 
+                [class.tab-active]="container == tab.value"
+                (click)="setContainer(tab.value)"
+                >
+                {{tab.label}}
+            </button>
+        }
+        </div>
+        @if (paginatedMessages()?.metadata; as metadata) {
+            <app-paginator 
+                [hidden]="metadata.totalCount === 0"
+                [pageNumber]="metadata.currentPage"
+                [pageSize]="metadata.pageSize"
+                [totalCount]="metadata.totalCount"
+                [totalPages]="metadata.totalPages"
+                (pageChange)="onPageChange($event)"
+            />
+        }        
+    </div>
+</div>
+
+<div class="overflow-x-auto mt-3">
+    <table class="table bg-base-100">
+      <thead>
+        <tr>
+          <th>Sender / Recipient</th>
+          <th>Message</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (message of paginatedMessages()?.items; track message.id) {
+            <tr>
+                <td>{{isInbox ? message.senderDisplayName : message.recipientDisplayName}}</td>
+                <td>{{message.content}}</td>
+                <td>{{message.messageSent}}</td>
+              </tr>
+        }
+        </tbody>
+    </table>
+  </div>
