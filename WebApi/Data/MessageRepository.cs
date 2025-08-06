@@ -1,4 +1,5 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using WebApi.DTO;
 using WebApi.Entities;
 using WebApi.Extensions;
@@ -25,8 +26,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     }
 
     public async Task<PaginatedResult<MessageDto>> GetMessagesForMember(
-        MessageParams messageParams
-    )
+        MessageParams messageParams)
     {
         var query = context.Messages
             .OrderByDescending(x => x.MessageSent)
@@ -43,11 +43,22 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         return await PaginationHelper.CreateAsync(messagesQuery,
              messageParams.PageNumber, messageParams.PageSize);
     }
-    
-    public Task<IReadOnlyList<MessageDto>> GetMessageThread(
+
+    public async Task<IReadOnlyList<MessageDto>> GetMessageThread(
         string currentMemberId, string recipientId)
     {
-        throw new Exception();
+        await context.Messages
+            .Where(x => x.RecipientId == currentMemberId
+                && x.SenderId == recipientId
+                && x.DateRead == null)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.DateRead, DateTime.UtcNow));
+
+        return await context.Messages
+            .Where(x => (x.RecipientId == currentMemberId && x.SenderId == recipientId)
+                || (x.SenderId == currentMemberId && x.RecipientId == recipientId))
+            .OrderBy(x => x.MessageSent)
+            .Select(MessageExtensions.ToDtoProjection())
+            .ToListAsync();
     }
 
     public async Task<bool> SaveAllChangesAsync()

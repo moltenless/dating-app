@@ -48,9 +48,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
         );
 
+        var nullableDtConverter = new ValueConverter<DateTime?, DateTime?>(
+            v => v.HasValue ? v.Value.ToUniversalTime() : null,
+            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null
+        );
+
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             foreach (var property in entityType.GetProperties())
                 if (property.ClrType == typeof(DateTime))
                     property.SetValueConverter(dtConverter);
+                else if (property.ClrType == typeof(DateTime?))
+                    property.SetValueConverter(nullableDtConverter);
     }
 }
