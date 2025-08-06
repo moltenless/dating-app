@@ -44,7 +44,7 @@ public class AccountController(
             return ValidationProblem();
         }
 
-        return user.ToDto(tokenService);
+        return await user.ToDto(tokenService);
     }
 
     [HttpPost("login")]
@@ -56,6 +56,6 @@ public class AccountController(
 
         var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
         if (!result) return Unauthorized("Invalid password");
-        return user.ToDto(tokenService);
+        return await user.ToDto(tokenService);
     }
 }

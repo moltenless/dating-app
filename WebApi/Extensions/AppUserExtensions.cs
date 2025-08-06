@@ -7,7 +7,7 @@ namespace WebApi.Extensions;
 
 public static class AppUserExtensions
 {
-    public static UserDto ToDto(
+    public static async Task<UserDto> ToDto(
         this AppUser user,
         ITokenService tokenService)
     {
@@ -17,7 +17,7 @@ public static class AppUserExtensions
             Email = user.Email!,
             ImageUrl = user.ImageUrl,
             DisplayName = user.DisplayName,
-            Token = tokenService.CreateToken(user),
+            Token = await tokenService.CreateTokenAsync(user),
         };
     }
 }
