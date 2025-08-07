@@ -1,0 +1,20 @@
+<div class="h-[75vh] overflow-auto rounded-box border border-base-content/5 bg-base-100">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Active roles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (user of users(); track user.id) {
+                <tr>
+                    <td>{{user.email}}</td>
+                    <td>{{user.roles}}</td>
+                    <td><button class="btn btn-primary">Edit roles</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
