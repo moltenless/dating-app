@@ -7,6 +7,7 @@ import { TimeagoPipe } from '../../../core/pipes/timeago-pipe';
 import { FormsModule } from '@angular/forms';
 import { subscribeOn } from 'rxjs';
 import { PresenceService } from '../../../core/services/presence-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-member-messages',
@@ -16,9 +17,10 @@ import { PresenceService } from '../../../core/services/presence-service';
 })
 export class MemberMessages implements OnInit{
   @ViewChild('messageEndRef') messageEndRef!: ElementRef
-  private messageService = inject(MessageService);
+  protected messageService = inject(MessageService);
   private memberService = inject(MemberService);
   protected presenceService = inject(PresenceService);
+  private route = inject(ActivatedRoute);
   protected messages = signal<Message[]>([]);
   protected messageContent = '';
 
@@ -32,7 +34,13 @@ export class MemberMessages implements OnInit{
   }
 
   ngOnInit(): void {
-    this.loadMessages();;
+    this.route.parent?.paramMap.subscribe({
+      next: params => {
+        const otherUserId = params.get('id')
+        if (!otherUserId) throw new Error('Cannot connect to hub');
+        this.messageService.createHubConnection(otherUserId);
+      }
+    })
   }
   
   loadMessages() {
