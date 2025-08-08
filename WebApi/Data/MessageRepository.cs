@@ -1,4 +1,5 @@
 using System;
+using System.Net.Mime;
 using Microsoft.EntityFrameworkCore;
 using WebApi.DTO;
 using WebApi.Entities;
@@ -12,7 +13,7 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
 {
     public void AddGroup(Group group)
     {
-        
+        context.Groups.Add(group);
     }
 
     public void AddMessage(Message message)
@@ -25,15 +26,30 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         context.Messages.Remove(message);
     }
 
-    public Task<Connection?> GetConnection(string connectionId) => throw new NotImplementedException();
-    public Task<Group?> GetGroupForConnection(string connectionId) => throw new NotImplementedException();
+    public async Task<Connection?> GetConnection(string connectionId)
+    {
+        return await context.Connections.FindAsync(connectionId);
+    }
+
+    public async Task<Group?> GetGroupForConnection(string connectionId)
+    {
+        return await context.Groups
+            .Include(x => x.Connections)
+            .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
+    }
 
     public async Task<Message?> GetMessage(string messageId)
     {
         return await context.Messages.FindAsync(messageId);
     }
 
-    public Task<Group?> GetMessageGroup(string groupName) => throw new NotImplementedException();
+    public async Task<Group?> GetMessageGroup(string groupName)
+    {
+        return await context.Groups
+            .Include(x => x.Connections)
+            .FirstOrDefaultAsync(x => x.Name == groupName);
+    }
 
     public async Task<PaginatedResult<MessageDto>> GetMessagesForMember(
         MessageParams messageParams)
@@ -75,7 +91,12 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
             .ToListAsync();
     }
 
-    public Task RemoveConnection(string connectionId) => throw new NotImplementedException();
+    public async Task RemoveConnection(string connectionId)
+    {
+        await context.Connections
+            .Where(x => x.ConnectionId == connectionId)
+            .ExecuteDeleteAsync();
+    }
 
     public async Task<bool> SaveAllChangesAsync()
     {
