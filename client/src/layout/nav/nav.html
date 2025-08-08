@@ -13,17 +13,17 @@
 
         <nav class="flex gap-3 my-2 uppercase text-lg text-white">
             @if (accountService.currentUser()) {
-                <a routerLink="/members" routerLinkActive="text-accent"
-                    [routerLinkActiveOptions]="{exact: true}">Matches</a>
-                <a routerLink="/lists" routerLinkActive="text-accent">Lists</a>
-                <a routerLink="/messages" routerLinkActive="text-accent">Messages</a>
-                <a *appHasRole="['Admin', 'Moderator']" routerLink="/admin" routerLinkActive="text-accent">Admin</a>
+            <a routerLink="/members" routerLinkActive="text-accent"
+                [routerLinkActiveOptions]="{exact: true}">Matches</a>
+            <a routerLink="/lists" routerLinkActive="text-accent">Lists</a>
+            <a routerLink="/messages" routerLinkActive="text-accent">Messages</a>
+            <a *appHasRole="['Admin', 'Moderator']" routerLink="/admin" routerLinkActive="text-accent">Admin</a>
             }
             <a routerLink="/errors" routerLinkActive="text-accent">Errors</a>
         </nav>
 
         @if (busyService.busyRequestCount() > 0) {
-            <span class="loading loading-spinner text-accent"></span>
+        <span class="loading loading-spinner text-accent"></span>
         }
 
         <div class="flex align-middle ml-auto gap-3">
@@ -40,9 +40,9 @@
                 </button>
                 <ul tabindex="1" class="dropdown-content z-50 menu bg-base-100 rounded-box w-52 p-2 shadow-sm">
                     @for(theme of themes; track $index){
-                        <li (click)="handleSelectTheme(theme)">
-                            <a>{{theme}}</a>
-                        </li>
+                    <li (click)="handleSelectTheme(theme)">
+                        <a>{{theme}}</a>
+                    </li>
                     }
                 </ul>
             </div>
@@ -63,7 +63,13 @@
                 <input [(ngModel)]="creds.email" name="email" type="text" class="input" placeholder="Email">
                 <input [(ngModel)]="creds.password" name="password" type="password" class="input"
                     placeholder="Password">
-                <button type="submit" class="btn">Login</button>
+                <button type="submit" class="btn btn-primary">
+                    @if(loading()){
+                        <span class="mr-2 loading-spinner">
+                            
+                        </span>
+                    }
+                    Login</button>
             </form>
             }
         </div>
