@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MessageService } from '../../../core/services/message-service';
 import { MemberService } from '../../../core/services/member-service';
 import { DatePipe } from '@angular/common';
@@ -13,7 +13,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './member-messages.html',
   styleUrl: './member-messages.css'
 })
-export class MemberMessages implements OnInit{
+export class MemberMessages implements OnInit, OnDestroy{
   @ViewChild('messageEndRef') messageEndRef!: ElementRef
   protected messageService = inject(MessageService);
   private memberService = inject(MemberService);
@@ -38,6 +38,10 @@ export class MemberMessages implements OnInit{
         this.messageService.createHubConnection(otherUserId);
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection();
   }
 
   sendMessage() {

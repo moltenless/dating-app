@@ -22,6 +22,7 @@ public class MessageHub(
 
         var groupName = GetGroupName(GetUserId(), otherUser);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        await AddToGroup(groupName);
 
         var messages = await messageRepository.GetMessageThread(GetUserId(), otherUser);
 
@@ -43,18 +44,42 @@ public class MessageHub(
             Content = dto.Content
         };
 
+        var groupName = GetGroupName(sender.Id, recipient.Id);
+        var group = await messageRepository.GetMessageGroup(groupName);
+
+        if (group != null && group.Connections.Any(x => x.UserId == message.RecipientId))
+        {
+            message.DateRead = DateTime.UtcNow;
+        }
+
         messageRepository.AddMessage(message);
 
         if (await messageRepository.SaveAllChangesAsync())
         {
-            var group = GetGroupName(sender.Id, recipient.Id);
-            await Clients.Group(group).SendAsync("NewMessage", message.ToDto());    
+            await Clients.Group(groupName).SendAsync("NewMessage", message.ToDto());    
         }
     }
 
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        return base.OnDisconnectedAsync(exception);
+        await messageRepository.RemoveConnection(Context.ConnectionId);
+        await base.OnDisconnectedAsync(exception);
+    }
+
+    private async Task<bool> AddToGroup(string groupName)
+    {
+        var group = await messageRepository.GetMessageGroup(groupName);
+        var connection = new Connection(Context.ConnectionId, GetUserId());
+
+        if (group == null)
+        {
+            group = new Group(groupName);
+            messageRepository.AddGroup(group);
+        }
+
+        group.Connections.Add(connection);
+
+        return await messageRepository.SaveAllChangesAsync();
     }
 
     private static string GetGroupName(string? caller, string? other)
