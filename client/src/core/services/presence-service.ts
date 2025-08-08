@@ -38,7 +38,9 @@ export class PresenceService {
     })
 
     this.hubConnection.on('NewMessageReceived', (message: Message) => {
-      this.toast.info(message.senderDisplayName + ' has sent you a new message');
+      this.toast.info(message.senderDisplayName + ' has sent you a new message', 
+        10000, message.senderImageUrl, 
+        `/members/${message.senderId}/messages`);
     } )
   }
 
