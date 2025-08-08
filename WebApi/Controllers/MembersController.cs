@@ -12,7 +12,7 @@ namespace WebApi.Controllers;
 
 [Authorize]
 public class MembersController(
-    IMemberRepository repository,
+    IUnitOfWork uow,
     IPhotoService photoService) : BaseApiController
 {
     [HttpGet]
@@ -20,14 +20,14 @@ public class MembersController(
         [FromQuery] MemberParams memberParams)
     {
         memberParams.CurrentMemberId = User.GetMemberId();
-        return Ok(await repository.GetMembersAsync(memberParams));
+        return Ok(await uow.MemberRepository.GetMembersAsync(memberParams));
     }
 
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Member>> GetMember(string id)
     {
-        var member = await repository.GetMemberByIdAsync(id);
+        var member = await uow.MemberRepository.GetMemberByIdAsync(id);
         if (member == null) return NotFound();
         return member;
     }
@@ -36,14 +36,14 @@ public class MembersController(
     public async Task<ActionResult<IReadOnlyList<Photo>>> GetMemberPhotos(
         string id)
     {
-        return Ok(await repository.GetPhotosForMemberAsync(id));
+        return Ok(await uow.MemberRepository.GetPhotosForMemberAsync(id));
     }
 
     [HttpPut]
     public async Task<ActionResult> UpdateMember(MemberUpdateDto dto)
     {
         var memberId = User.GetMemberId();
-        var member = await repository.GetMemberForUpdateAsync(memberId);
+        var member = await uow.MemberRepository.GetMemberForUpdateAsync(memberId);
         if (member is null) return BadRequest("Could not get member");
 
         member.DisplayName = dto.DisplayName ?? member.DisplayName;
@@ -53,16 +53,16 @@ public class MembersController(
 
         member.User.DisplayName = dto.DisplayName ?? member.User.DisplayName;
 
-        // repository.Update(member); //optional
+        // uow.MemberRepository.Update(member); //optional
 
-        if (await repository.SaveAllAsync()) return NoContent();
+        if (await uow.Complete()) return NoContent();
         return BadRequest("Failed to update member");
     }
 
     [HttpPost("add-photo")]
     public async Task<ActionResult<Photo>> AddPhotoAsync([FromForm] IFormFile file)
     {
-        var member = await repository.GetMemberForUpdateAsync(User.GetMemberId());
+        var member = await uow.MemberRepository.GetMemberForUpdateAsync(User.GetMemberId());
         if (member == null) return BadRequest("Cannot update member");
 
         var result = await photoService.UploadPhotoAsync(file);
@@ -82,14 +82,14 @@ public class MembersController(
         }
         member.Photos.Add(photo);
 
-        if (await repository.SaveAllAsync()) return photo;
+        if (await uow.Complete()) return photo;
         return BadRequest("Problem adding photo");
     }
 
     [HttpPut("set-main-photo/{photoId}")]
     public async Task<ActionResult> SetMainPhotoAsync(int photoId)
     {
-        var member = await repository.GetMemberForUpdateAsync(User.GetMemberId());
+        var member = await uow.MemberRepository.GetMemberForUpdateAsync(User.GetMemberId());
         if (member == null) return BadRequest("Cannot get member from token");
 
         var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
@@ -101,14 +101,14 @@ public class MembersController(
         member.ImageUrl = photo.Url;
         member.User.ImageUrl = photo.Url;
 
-        if (await repository.SaveAllAsync()) return NoContent();
+        if (await uow.Complete()) return NoContent();
         return BadRequest("Problem setting main photo");
     }
 
     [HttpDelete("delete-photo/{photoId}")]
     public async Task<ActionResult> DeletePhoto(int photoId)
     {
-        var member = await repository.GetMemberForUpdateAsync(User.GetMemberId());
+        var member = await uow.MemberRepository.GetMemberForUpdateAsync(User.GetMemberId());
         if (member == null) return BadRequest("Cannot get member from token");
 
         var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
@@ -124,7 +124,7 @@ public class MembersController(
         }
 
         member.Photos.Remove(photo);
-        if (await repository.SaveAllAsync()) return Ok();
+        if (await uow.Complete()) return Ok();
         return BadRequest("Problem deleting the photo");
     }
 }

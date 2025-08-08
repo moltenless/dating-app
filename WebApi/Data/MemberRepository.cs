@@ -50,11 +50,6 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
                         memberParams.PageSize);
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
-
     public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string memberId)
     {
         return await context.Members

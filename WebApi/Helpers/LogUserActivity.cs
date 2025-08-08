@@ -20,6 +20,7 @@ public class LogUserActivity : IAsyncActionFilter
 
         var dbContext = resultContext.HttpContext.RequestServices
             .GetRequiredService<AppDbContext>();
+            
         await dbContext.Members
             .Where(x => x.Id == memberId)
             .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.LastActive, DateTime.UtcNow));
