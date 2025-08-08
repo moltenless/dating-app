@@ -15,4 +15,10 @@ public interface IMessageRepository
         string currentMemberId,
         string recipientId);
     Task<bool> SaveAllChangesAsync();
+
+    void AddGroup(Group group);
+    Task RemoveConnection(string connectionId);
+    Task<Connection?> GetConnection(string connectionId);
+    Task<Group?> GetMessageGroup(string groupName);
+    Task<Group?> GetGroupForConnection(string connectionId);
 }
