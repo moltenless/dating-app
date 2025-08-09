@@ -67,5 +67,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :  IdentityDbC
                     property.SetValueConverter(dtConverter);
                 else if (property.ClrType == typeof(DateTime?))
                     property.SetValueConverter(nullableDtConverter);
+
+        modelBuilder.Entity<Photo>().HasQueryFilter(p => p.Approved);
     }
 }

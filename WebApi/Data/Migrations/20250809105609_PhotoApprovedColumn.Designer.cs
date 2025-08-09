@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.Data;
 
@@ -10,9 +11,11 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250809105609_PhotoApprovedColumn")]
+    partial class PhotoApprovedColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -259,7 +262,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GroupName");
 
-                    b.ToTable("Connections", (string)null);
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Group", b =>
@@ -269,7 +272,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Member", b =>
@@ -310,7 +313,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Members", (string)null);
+                    b.ToTable("Members");
                 });
 
             modelBuilder.Entity("WebApi.Entities.MemberLike", b =>
@@ -325,7 +328,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("TargetMemberId");
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Message", b =>
@@ -363,7 +366,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Photo", b =>
@@ -390,7 +393,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Photos", (string)null);
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

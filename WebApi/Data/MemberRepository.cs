@@ -14,7 +14,8 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
     }
 
 
-    public async Task<Member?> GetMemberForUpdateAsync(string id) {
+    public async Task<Member?> GetMemberForUpdateAsync(string id)
+    {
         return await context.Members
             .Include(x => x.User)
             .Include(x => x.Photos)
@@ -50,11 +51,46 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
                         memberParams.PageSize);
     }
 
-    public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string memberId)
+    public async Task<IReadOnlyList<Photo>> GetPhotosForMemberAsync(string requestingMemberId, string memberId)
     {
-        return await context.Members
-            .Where(x => x.Id == memberId)
-            .SelectMany(x => x.Photos)
+        if (requestingMemberId == memberId)
+            return await context.Members
+                .IgnoreQueryFilters() // Show your not approved photos to yourself
+                .Where(x => x.Id == memberId)
+                .SelectMany(x => x.Photos)
+                .ToListAsync();
+        else
+            return await context.Members
+                .Where(x => x.Id == memberId)
+                .SelectMany(x => x.Photos)
+                .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<Photo>> GetPhotosForModerationAsync()
+    {
+        return await context.Photos
+            .IgnoreQueryFilters()
+            .Where(p => !p.Approved)
             .ToListAsync();
+    }
+
+    public void ModeratePhotoAsync(Photo photo, bool approve)
+    {
+        if (approve)
+        {
+            photo.Approved = true;
+        }
+        else
+        {
+            context.Photos.Remove(photo);
+        }
+    }
+
+    public async Task<Photo?> GetPhotoAsync(int photoId, bool onlyApproved)
+    {
+        if (onlyApproved)
+            return await context.Photos.FindAsync(photoId);
+        else
+            return await context.Photos.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == photoId);
     }
 }

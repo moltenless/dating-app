@@ -1,13 +1,20 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Data;
+using WebApi.DTO;
 using WebApi.Entities;
+using WebApi.Interfaces;
 
 namespace WebApi.Controllers;
 
-public class AdminController(UserManager<AppUser> userManager) : BaseApiController
+public class AdminController(
+    UserManager<AppUser> userManager,
+    IUnitOfWork uow) : BaseApiController()
 {
     [Authorize(Policy = "RequireAdminRole")]
     [HttpGet("users-with-roles")]
@@ -51,11 +58,31 @@ public class AdminController(UserManager<AppUser> userManager) : BaseApiControll
 
         return Ok(await userManager.GetRolesAsync(user));
     }
-    
+
     [Authorize(Policy = "ModeratePhotoRole")]
     [HttpGet("photos-to-moderate")]
-    public ActionResult GetPhotosForModeration()
+    public async Task<ActionResult> GetPhotosForModeration()
     {
-        return Ok("Admins or moderators can see this");
+        return Ok(await uow.MemberRepository.GetPhotosForModerationAsync());
+    }
+
+    [Authorize(Policy = "ModeratePhotoRole")]
+    [HttpPost("moderate-photo")]
+    public async Task<ActionResult> ModeratePhoto([FromBody] ModeratePhotoDto dto)
+    {
+        var photo = await uow.MemberRepository.GetPhotoAsync(dto.PhotoId, false);
+        if (photo is null) return BadRequest("Cannot find the photo by its id");
+
+        uow.MemberRepository.ModeratePhotoAsync(photo, dto.Approve);
+
+        var member = await uow.MemberRepository.GetMemberForUpdateAsync(photo.MemberId);
+        if (dto.Approve && member is not null && member.ImageUrl is null)
+        {
+            member.ImageUrl = photo.Url;
+            member.User.ImageUrl = photo.Url;
+        }
+
+        if (await uow.Complete()) return Ok();
+        return BadRequest("Something went wrong internally");
     }
 }

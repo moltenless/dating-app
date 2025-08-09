@@ -36,7 +36,7 @@ public class MembersController(
     public async Task<ActionResult<IReadOnlyList<Photo>>> GetMemberPhotos(
         string id)
     {
-        return Ok(await uow.MemberRepository.GetPhotosForMemberAsync(id));
+        return Ok(await uow.MemberRepository.GetPhotosForMemberAsync(User.GetMemberId(), id));
     }
 
     [HttpPut]
@@ -72,14 +72,10 @@ public class MembersController(
         {
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId,
-            MemberId = User.GetMemberId()
+            MemberId = User.GetMemberId(),
+            Approved = false
         };
 
-        if (member.ImageUrl == null)
-        {
-            member.ImageUrl = photo.Url;
-            member.User.ImageUrl = photo.Url;
-        }
         member.Photos.Add(photo);
 
         if (await uow.Complete()) return photo;
@@ -93,7 +89,7 @@ public class MembersController(
         if (member == null) return BadRequest("Cannot get member from token");
 
         var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
-        if (member.ImageUrl == photo?.Url || photo == null)
+        if (member.ImageUrl == photo?.Url || photo == null || !photo.Approved)
         {
             return BadRequest("Cannot set this as main image");
         }
@@ -111,17 +107,17 @@ public class MembersController(
         var member = await uow.MemberRepository.GetMemberForUpdateAsync(User.GetMemberId());
         if (member == null) return BadRequest("Cannot get member from token");
 
-        var photo = member.Photos.SingleOrDefault(x => x.Id == photoId);
-        if (photo == null || photo.Url == member.ImageUrl)
-        {
-            return BadRequest("This photo cannot be deleted");
-        }
-
+        var photo = await uow.MemberRepository.GetPhotoAsync(photoId, false);
+        if (photo == null || photo.MemberId != member.Id)
+            return BadRequest("This photo cannot be found by its id or it doesn't belong to the member");
+        if(photo.Url == member.ImageUrl)
+            return BadRequest("This photo is avatar and cannot be deleted");
+        
         if (photo.PublicId != null)
-        {
-            var result = await photoService.DeletePhotoAsync(photo.PublicId);
-            if (result.Error != null) return BadRequest(result.Error.Message);
-        }
+            {
+                var result = await photoService.DeletePhotoAsync(photo.PublicId);
+                if (result.Error != null) return BadRequest(result.Error.Message);
+            }
 
         member.Photos.Remove(photo);
         if (await uow.Complete()) return Ok();
