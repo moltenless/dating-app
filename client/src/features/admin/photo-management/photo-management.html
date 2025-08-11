@@ -1,0 +1,11 @@
+<div class="flex flex-row gap-3 w-full py-4">
+    @for (photo of photos(); track photo.id) {
+        <div class="flex flex-col w-1/6">
+            <img [src]="photo.url" alt="photo for moderation">
+            <div class="justify-between flex flex-row">
+                <button (click)="moderatePhoto(photo.id, true)" class="btn btn-success w-5/11 mt-1">Approve</button>
+                <button (click)="moderatePhoto(photo.id, false)" class="btn btn-error w-5/11 mt-1">Decline</button>
+            </div>
+        </div>
+    }
+</div>

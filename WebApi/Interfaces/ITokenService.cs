@@ -1,0 +1,10 @@
+using System;
+using WebApi.Entities;
+
+namespace WebApi.Interfaces;
+
+public interface ITokenService
+{
+    Task<string> CreateTokenAsync(AppUser user);
+    string GenerateRefreshToken();
+}

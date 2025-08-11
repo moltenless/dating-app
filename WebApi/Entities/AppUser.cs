@@ -1,9 +1,14 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace WebApi.Entities;
 
-public class AppUser
+public class AppUser : IdentityUser
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string DisplayName { get; set; } = null!;
-    public string Email { get; set; } = null!;
+    public string? ImageUrl { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpire { get; set; }
+
+    public Member Member { get; set; } = null!;
 }
 
