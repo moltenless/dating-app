@@ -16,7 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), opt =>
+    {
+        opt.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+    }));
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
